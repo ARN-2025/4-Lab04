@@ -5,7 +5,7 @@
 
 ## Step 1: MLP with Raw Data
 
-### 1. Chosen Architecture
+### 1. Architecture - MLP
 
 The input of the network consists of flattened `MNIST` images (28x28 = 784 pixels).  
 The output is a 10-dimensional vector representing the digit classes (0–9).
@@ -26,7 +26,7 @@ The best validation accuracy was obtained with **512 hidden neurons**.
 
 ---
 
-### 2. Number of Parameters
+### 2. Parameters - MLP
 
 For the final model (784 → 512 → 10):
 
@@ -40,7 +40,7 @@ For the final model (784 → 512 → 10):
 
 ---
 
-### 3. Accuracy and Loss Evolution
+### 3. Accuracy - MLP
 
 The training was performed over 10 epochs, using a batch size of 128 and 10% of training data used for validation.
 
@@ -57,7 +57,7 @@ Loss curves confirmed proper convergence without signs of overfitting.
 
 ---
 
-### 4. Final Confusion Matrix
+### 4. Confusion Matrix - MLP
 
 The final model was evaluated on the test set. It achieved a test accuracy of **98.26%**.
 
@@ -75,14 +75,14 @@ These errors are consistent with human visual ambiguities.
 
 ---
 
-### 5. Comments
+### 5. Comments - MLP
 
 This first experiment shows that a shallow MLP trained on raw pixels can already achieve excellent performance on `MNIST`.  
 However, certain digit pairs remain challenging and could benefit from feature extraction or deeper architectures.
 
 ## Step 2: MLP with HOG
 
-### 1. HOG Parameters
+### 1. Feature Extraction - HOG
 
 To extract features from MNIST images, we used the `Histogram of Oriented Gradients (HOG)` method with the following configurations:
 
@@ -95,7 +95,7 @@ The goal was to evaluate the effect of cell size on the feature representation a
 
 ---
 
-### 2. Network Architecture
+### 2. Parameters - HOG
 
 For each HOG configuration, we trained 3 MLPs with different hidden layer sizes:
 
@@ -126,7 +126,7 @@ For the final model (example: input = 576 features):
 
 ---
 
-### 4. Results
+### 4. Confusion Matrix - HOG
 
 We trained each model for 10 epochs with batch size 128.  
 The best model (**HOG 4, 256 units**) achieved a test accuracy of **98.40%**.
@@ -148,7 +148,7 @@ The best model (**HOG 4, 256 units**) achieved a test accuracy of **98.40%**.
 
 ---
 
-### 5. Comparison with Raw Data
+### 5. Comparison - HOG
 
 Compared to Step 1 (raw pixels):
 
@@ -160,14 +160,14 @@ providing a compact and effective representation with fewer input dimensions.
 
 ---
 
-### 6. Comments
+### 6. Comments - HOG
 
 This experiment shows that HOG features can be effectively used for digit classification with MLPs.  
 In this case, HOG even slightly surpasses raw pixel performance, showing its relevance for structured gradient-based datasets.
 
 ## Step 3: CNN
 
-### 1. CNN Architectures
+### 1. Architecture - CNN
 
 In this final experiment, we used Convolutional Neural Networks (CNNs) to classify the MNIST dataset.  
 We tested **8 different architectures**, combining the following hyperparameters:
@@ -186,14 +186,14 @@ Each model had the structure:
 
 ---
 
-### 2. Number of Parameters
+### 2. Parameters - CNN
 
 The number of parameters varies by architecture.  
 The best performing model was `F32_K5_DO_D128`, with approximately **530,000 parameters** in total.
 
 ---
 
-### 3. Accuracy and Loss Evolution
+### 3. Accuracy - CNN
 
 We trained all CNN models for 10 epochs with a batch size of 128.
 
@@ -205,7 +205,7 @@ The best performing model was clearly **F32_K5_DO_D128**, reaching over **99.05%
 
 ---
 
-### 4. Final Confusion Matrix
+### 4. Confusion Matrix - CNN
 
 The confusion matrix for the best model reveals excellent classification performance:
 
@@ -216,7 +216,7 @@ The confusion matrix for the best model reveals excellent classification perform
 
 ---
 
-### 5. Test Results Summary
+### 5. Results Summary - CNN
 
 | Model             | Test Accuracy | Test Loss |
 |------------------|---------------|-----------|
@@ -231,7 +231,7 @@ The confusion matrix for the best model reveals excellent classification perform
 
 ---
 
-### 6. Comments
+### 6. Comments - CNN
 
 This experiment confirms the benefit of CNNs for image classification:
 
@@ -241,4 +241,4 @@ This experiment confirms the benefit of CNNs for image classification:
 
 These results highlight how architecture tuning can significantly affect performance, even on a relatively simple dataset.
 
-## Step 4
+## Step 4 TODO
