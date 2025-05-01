@@ -49,6 +49,12 @@ The model with 512 neurons reached over **98.4% validation accuracy**.
 
 Loss curves confirmed proper convergence without signs of overfitting.
 
+**Validation accuracy curves:**
+![Validation accuracy curves for raw pixel models](imgs/Validation_accuracy_curves_for_raw_pixel_models_etape_1.png)
+
+**Training and validation loss curves:**
+![Training vs validation loss curve for raw data](imgs/Training_vs_validation_loss_curve_for_raw_data_etape_1.png)
+
 ---
 
 ### 4. Final Confusion Matrix
@@ -65,6 +71,8 @@ Confusion matrix analysis reveals:
 
 These errors are consistent with human visual ambiguities.
 
+![Confusion matrix for raw pixel model - 512 units](imgs/Confusion_matrix_for_raw_pixel_model_512_units_etape_1.png)
+
 ---
 
 ### 5. Comments
@@ -72,4 +80,89 @@ These errors are consistent with human visual ambiguities.
 This first experiment shows that a shallow MLP trained on raw pixels can already achieve excellent performance on `MNIST`.  
 However, certain digit pairs remain challenging and could benefit from feature extraction or deeper architectures.
 
-## Step 2: TODO
+## Step 2: MLP with HOG
+
+### 1. HOG Parameters
+
+To extract features from MNIST images, we used the `Histogram of Oriented Gradients (HOG)` method with the following configurations:
+
+- **Orientations:** 9
+- **Pixels per cell:** tested values: **4** and **7**
+- **Cells per block:** (2, 2)
+- **Block normalization:** L2-Hys
+
+The goal was to evaluate the effect of cell size on the feature representation and classification accuracy.
+
+---
+
+### 2. Network Architecture
+
+For each HOG configuration, we trained 3 MLPs with different hidden layer sizes:
+
+- Hidden layer sizes tested: **128**, **256**, **512**
+- Final selected model: **HOG (pix_per_cell=4) + 256 neurons**
+
+**Final architecture:**
+
+- Input layer: number of HOG features (≈ 576 for ppc=4)
+- Hidden layer: 256 neurons (ReLU)
+- Output layer: 10 neurons (Softmax)
+
+---
+
+### 3. Number of Parameters
+
+For the final model (example: input = 576 features):
+
+- **Input to hidden layer:**
+  - Weights: 576 × 256 = 147,456
+  - Biases: 256
+- **Hidden to output layer:**
+  - Weights: 256 × 10 = 2,560
+  - Biases: 10
+- **Total parameters: 150,282**
+
+(Note: the input dimension may vary depending on the exact output size of the HOG descriptor.)
+
+---
+
+### 4. Results
+
+We trained each model for 10 epochs with batch size 128.  
+The best model (**HOG 4, 256 units**) achieved a test accuracy of **98.40%**.
+
+**Validation accuracy evolution:**
+
+- HOG with `pix_per_cell = 4` showed higher accuracy than `pix_per_cell = 7` in most architectures.
+
+**Confusion matrix analysis** (HOG 4, 256 units):
+
+- Most digits are accurately predicted.
+- Confusions include:
+  - **9 vs. 4**
+  - **5 vs. 3**
+  - **8 vs. 3**
+
+![Validation accuracy curves for HOG models](imgs/Validation_accuracy_curves_for_HOG_models_etape_2.png)
+![Confusion matrix for HOG 4 - 256 units](imgs/Confusion_matrix_for_HOG_4_256_units_etape_2.png)
+
+---
+
+### 5. Comparison with Raw Data
+
+Compared to Step 1 (raw pixels):
+
+- Accuracy with raw pixels (best model): **98.26%**
+- Accuracy with HOG (best model): **98.40%**
+
+This suggests that **HOG features slightly outperform raw pixels** in this experiment,  
+providing a compact and effective representation with fewer input dimensions.
+
+---
+
+### 6. Comments
+
+This experiment shows that HOG features can be effectively used for digit classification with MLPs.  
+In this case, HOG even slightly surpasses raw pixel performance, showing its relevance for structured gradient-based datasets.
+
+## Étape 3 TODO
