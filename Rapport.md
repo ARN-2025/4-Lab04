@@ -165,4 +165,80 @@ providing a compact and effective representation with fewer input dimensions.
 This experiment shows that HOG features can be effectively used for digit classification with MLPs.  
 In this case, HOG even slightly surpasses raw pixel performance, showing its relevance for structured gradient-based datasets.
 
-## Étape 3 TODO
+## Step 3: CNN
+
+### 1. CNN Architectures
+
+In this final experiment, we used Convolutional Neural Networks (CNNs) to classify the MNIST dataset.  
+We tested **8 different architectures**, combining the following hyperparameters:
+
+- **Filters:** 32 or 64
+- **Kernel size:** 3 or 5
+- **With or without Dropout**
+- **Dense layer size:** 128 (fixed)
+
+Each model had the structure:
+
+- Conv2D → ReLU → MaxPooling2D  
+- Conv2D → ReLU → MaxPooling2D  
+- (Optional) Dropout  
+- Flatten → Dense(128) → ReLU → Dense(10) → Softmax
+
+---
+
+### 2. Number of Parameters
+
+The number of parameters varies by architecture.  
+The best performing model was `F32_K5_DO_D128`, with approximately **530,000 parameters** in total.
+
+---
+
+### 3. Accuracy and Loss Evolution
+
+We trained all CNN models for 10 epochs with a batch size of 128.
+
+The following figure compares validation accuracy across all 8 configurations:
+
+![Validation accuracy per epoch for all CNNs](imgs/Validation_accuracy_curves_for_CNN_models_etape_3.png)
+
+The best performing model was clearly **F32_K5_DO_D128**, reaching over **99.05%** test accuracy.
+
+---
+
+### 4. Final Confusion Matrix
+
+The confusion matrix for the best model reveals excellent classification performance:
+
+- Very few misclassifications
+- Remaining errors mostly between visually similar digits (e.g., 3 and 5)
+
+![Confusion matrix for F32_K5_DO_D128](imgs/Confusion_matrix_for_F32_K5_DO_D128_etape_3.png)
+
+---
+
+### 5. Test Results Summary
+
+| Model             | Test Accuracy | Test Loss |
+|------------------|---------------|-----------|
+| F32_K3_noDO_D128 | 98.25%        | 0.0616    |
+| F32_K3_DO_D128   | 98.78%        | 0.0415    |
+| F32_K5_noDO_D128 | 98.90%        | 0.0396    |
+| **F32_K5_DO_D128**   | **99.05%**        | **0.0311**    |
+| F64_K3_noDO_D128 | 98.76%        | 0.0421    |
+| F64_K3_DO_D128   | 98.76%        | 0.0402    |
+| F64_K5_noDO_D128 | 98.93%        | 0.0380    |
+| F64_K5_DO_D128   | 98.88%        | 0.0342    |
+
+---
+
+### 6. Comments
+
+This experiment confirms the benefit of CNNs for image classification:
+
+- CNNs significantly outperform MLPs and HOG-based models on MNIST.
+- Using a kernel size of 5 and applying Dropout improved generalization.
+- A smaller model (F32 filters) with good regularization outperformed larger ones, showing that **Dropout is beneficial** and that model size should be balanced with overfitting control.
+
+These results highlight how architecture tuning can significantly affect performance, even on a relatively simple dataset.
+
+## Step 4
