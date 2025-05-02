@@ -1,10 +1,11 @@
 # Introduction
 
-Ce fichier n'est pas destiné à être push sur le repo, il est juste là pour que nous comprenons ce que nous faisons.
+Ce fichier n'est pas destiné à être push sur le repo, il est juste là pour que nous comprenions ce que nous faisons.
 
-## Étape 1
+## Étape 1 – MLP sur données brutes
 
-Fichier `MLP_from_raw_data.ipynb`
+Fichier : `MLP_from_raw_data.ipynb`  
+**But** : Implémenter et comparer plusieurs réseaux MLP classiques (1 couche cachée), entraînés sur les pixels bruts du jeu de données MNIST.
 
 ### 🎯 Objectif global de l'étape 1
 
@@ -51,13 +52,14 @@ Cela permet de :
 - Elle permet d'analyser finement les erreurs du modèle.
 - Elle montre quelles classes sont confondues entre elles, ce qui éclaire les limites du modèle.
 
-## Étape 2
+## Étape 2 – MLP avec extraction HOG
 
-Fichier `MLP_from_HOG.ipynb`
+Fichier : `MLP_from_HOG.ipynb`  
+**But** : Comparer l’approche "pixels bruts" avec une approche où les images sont d'abord transformées en vecteurs de caractéristiques HOG, puis classées avec un MLP.
 
 ### 🎯 Objectif global de l'étape 2
 
-L’objectif est toujours de classer des chiffres manuscrits (`MNIST`) mais cette fois-ci **en extrayant des caractéristiques (features)** à l’aide de `HOG` avant d’entraîner un `MLP`.  
+L’objectif est toujours de classer des chiffres manuscrits (`MNIST`) mais cette fois-ci **en extrayant des caractéristiques (features)** à l’aide de `HOG` avant d’entraîner un `MLP`.
 On cherche à comparer l’approche *brute* (pixels) avec une approche *basée sur des descripteurs visuels*.
 
 ---
@@ -120,4 +122,74 @@ Cette étape permet de comprendre :
 - Les impacts des choix de paramètres (cellule, neurones),
 - Comment l’extraction de features modifie la performance d’un réseau simple.
 
-## Étape 3
+## Étape 3 – CNN
+
+Fichier : `CNN.ipynb`  
+**But** : Utiliser des réseaux convolutifs (CNN) pour améliorer les performances de classification sur MNIST, en explorant plusieurs architectures (filtres, dropout, etc.).
+
+### 🎯 Objectif global de l'étape 3
+
+L'objectif est de construire et d'entraîner plusieurs modèles CNN, en faisant varier les **paramètres structurels** comme le nombre de filtres, la taille des noyaux, la présence de Dropout, etc.  
+Le but final est de comparer la **puissance des CNN** face aux MLP, et d'étudier l’impact de certains choix d’architecture.
+
+---
+
+### 🧠 Pourquoi un `CNN` (Convolutional Neural Network) ?
+
+- Contrairement aux MLP, les CNN exploitent la **structure spatiale des images**.
+- Ils utilisent des **filtres convolutifs** qui détectent des motifs (bords, textures, formes).
+- Ils nécessitent **beaucoup moins de paramètres** pour des résultats souvent bien meilleurs.
+
+---
+
+### 🔁 Pourquoi tester plusieurs combinaisons (filtres, tailles, dropout) ?
+
+- Chaque paramètre modifie la **capacité d’extraction des motifs visuels** :
+  - **Plus de filtres** → plus de diversité de motifs détectés.
+  - **Plus grand noyau (5x5)** → motifs plus larges (mais plus coûteux).
+  - **Dropout** → réduction du surapprentissage.
+- En testant **8 combinaisons**, on peut :
+  - **mesurer l'impact de chaque paramètre**,
+  - **identifier la meilleure configuration**,
+  - conclure objectivement sur leur utilité.
+
+---
+
+### 📈 Pourquoi visualiser les courbes de validation ?
+
+- Elles permettent de suivre **l'évolution de la précision sur les données non vues**.
+- Une courbe stable qui monte suggère un bon apprentissage.
+- On peut identifier si un modèle **sur-apprend** (écart train/val) ou **sous-apprend**.
+
+---
+
+### 🔍 Pourquoi une matrice de confusion finale ?
+
+- Même logique que pour les étapes 1 et 2.
+- Ici elle confirme que le CNN **fait moins d’erreurs de confusion** que les autres modèles.
+
+---
+
+### 🧪 Quel est le meilleur modèle et pourquoi ?
+
+- Le modèle **F32_K5_DO_D128** est le meilleur (99.05% de précision test).
+- Il utilise :
+  - **32 filtres**
+  - **noyaux 5x5**
+  - **Dropout** (25% après conv, 50% après dense)
+- Il montre que :
+  - le **dropout aide clairement** à la généralisation,
+  - un modèle modeste mais bien régularisé peut surpasser des architectures plus grandes.
+
+---
+
+### ⚖️ Comparaison avec les MLP précédents
+
+| Modèle        | Accuracy test |
+|---------------|---------------|
+| MLP (raw)     | 98.26%        |
+| MLP (HOG)     | 98.40%        |
+| CNN (meilleur)| **99.05%**    |
+
+Le CNN surpasse clairement les autres modèles, tout en conservant une structure assez simple.  
+Cela confirme que les architectures convolutives sont **mieux adaptées à l’analyse d’images**, même simples comme MNIST.
