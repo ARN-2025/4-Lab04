@@ -193,3 +193,5 @@ Le but final est de comparer la **puissance des CNN** face aux MLP, et d'étudie
 
 Le CNN surpasse clairement les autres modèles, tout en conservant une structure assez simple.  
 Cela confirme que les architectures convolutives sont **mieux adaptées à l’analyse d’images**, même simples comme MNIST.
+
+## Étape 4 TODO
