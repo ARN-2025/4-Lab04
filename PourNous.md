@@ -194,4 +194,67 @@ Le but final est de comparer la **puissance des CNN** face aux MLP, et d'étudie
 Le CNN surpasse clairement les autres modèles, tout en conservant une structure assez simple.  
 Cela confirme que les architectures convolutives sont **mieux adaptées à l’analyse d’images**, même simples comme MNIST.
 
-## Étape 4 TODO
+## Étape 4 – CNN pour la détection de pneumonie
+
+Fichier : `CNN_pneumonia.ipynb`  
+**But** : Construire un CNN binaire (pneumonie / normal) à partir de radiographies pulmonaires en niveaux de gris.
+
+### 🎯 Objectif global de l'étape 4
+Détecter automatiquement la pneumonie sur des clichés thoraciques afin de démontrer la transférabilité des CNN à un **domaine médical plus complexe** que MNIST.
+
+---
+
+### 🧠 Pourquoi un `CNN` pour les radios pulmonaires ?
+- Les radiographies contiennent des **patrons visuels locaux** (opacités, infiltrats) que les filtres convolutifs identifient mieux qu’un MLP.  
+- Le CNN gère les **variations d’échelle et de position** grâce au pooling.  
+- Le nombre de paramètres reste raisonnable par rapport à un réseau entièrement dense sur des images 150×150.
+
+---
+
+### 🏗️ Architecture retenue
+1. **Conv 32 (3×3) → ReLU → MaxPool**  
+2. **Conv 64 (3×3) → ReLU → MaxPool**  
+3. **Conv 128 (3×3) → ReLU → MaxPool**  
+4. **Dropout 0.5**  
+5. **Flatten → Dense 128 (ReLU) → Dense 1 (sigmoïde)**  
+
+*Hyper‑paramètres* : Adam, `binary_crossentropy`, batch 32, 10 époques (early‑stopping activé).
+
+---
+
+### ⚙️ Pourquoi ces choix ?
+- **Images 150×150 / niveaux de gris** : compromis entre définition et mémoire GPU.  
+- **Sigmoïde + binary_crossentropy** : adapté à une classification **binaire**.  
+- **Dropout 0.5** : essentiel pour **réduire le surapprentissage** sur un dataset limité.  
+- **Recall priorisé** : rater une pneumonie est plus grave qu’un faux positif.
+
+---
+
+### 📈 Résultats principaux
+| Classe        | Précision | Rappel | F1‑score |
+|---------------|-----------|--------|----------|
+| Pneumonia     | 0.81      | **0.99** | 0.88     |
+| Normal        | **0.95**  | 0.58   | 0.73     |
+
+- **Accuracy globale** : 83.8 % (sur le jeu de test).  
+- **Matrice de confusion** : très peu de faux négatifs, mais un nombre notable de faux positifs (normaux ➜ pneumonie).
+
+---
+
+### 🔍 Analyse des performances
+- **Sensibilité élevée** (rappel 0.99) : le modèle repère quasi toutes les pneumonies, ce qui est primordial en clinique.  
+- **Spécificité limitée** : beaucoup de normaux incorrectement classés ➜ besoin de régularisation ou de rééquilibrage.  
+- **Déséquilibre de classes** : le dataset contient ~3 × plus d’images de pneumonie que de normales, d’où le biais.
+
+---
+
+### 🛠️ Pistes d’amélioration
+- **Data augmentation ciblée** (rotations légères, translations) pour enrichir la classe *Normal*.  
+- **Rééchantillonnage ou pondération des classes** dans la fonction de perte.  
+- **Batch Normalization** entre convolutions pour stabiliser l’apprentissage.  
+- **Entraînement plus long + early‑stopping** afin d’atteindre un meilleur point de validation.
+
+---
+
+### ⚖️ Conclusion
+Le CNN détecte efficacement la pneumonie (très peu de faux négatifs) mais doit réduire les faux positifs avant toute application clinique réelle. Des techniques de ré‑équilibrage et de régularisation devraient permettre d’améliorer la **spécificité** sans sacrifier la **sensibilité**.
